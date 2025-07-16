@@ -1,25 +1,22 @@
-const express = require('express')
+import express from "express";
 
-const router = express.Router()
+import {
+  deleteContact,
+  getAll,
+  getById,
+  patchFavorite,
+  postContact,
+  putContact,
+} from "../../controllers/contacts.js";
+import { cntrlTryCatchWrapper } from "../../helpers/cntrlTryCatchWrapper.js";
 
-router.get('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+const router = express.Router();
 
-router.get('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get("/", cntrlTryCatchWrapper(getAll));
+router.get("/:contactId", cntrlTryCatchWrapper(getById));
+router.post("/", cntrlTryCatchWrapper(postContact));
+router.delete("/:contactId", cntrlTryCatchWrapper(deleteContact));
+router.put("/:contactId", cntrlTryCatchWrapper(putContact));
+router.patch("/:contactId/favorite", cntrlTryCatchWrapper(patchFavorite));
 
-router.post('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
-
-router.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
-
-router.put('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
-
-module.exports = router
+export default router;
