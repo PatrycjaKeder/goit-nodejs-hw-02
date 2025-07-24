@@ -1,25 +1,44 @@
-const express = require('express')
+import express from "express";
+import {
+  deleteContact,
+  getAll,
+  getById,
+  patchFavorite,
+  postContact,
+  putContact,
+} from "../../controllers/contacts.js";
+import { cntrlTryCatchWrapper } from "../../helpers/cntrlTryCatchWrapper.js";
+import { authenticate } from "../../middlewares/authenticate.js";
+import { validateBody } from "../../middlewares/validateBody.js";
+import { addSchema, patchSchema, putSchema } from "../../models/contact.js";
+import { isValidId } from "../../middlewares/isValidId.js";
+import { isEmptyBody } from "../../middlewares/isEmptyBody.js";
 
-const router = express.Router()
+const router = express.Router();
+router.use(authenticate);
 
-router.get('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get("/", cntrlTryCatchWrapper(getAll));
+router.get("/:contactId", isValidId, cntrlTryCatchWrapper(getById));
+router.post(
+  "/",
+  isEmptyBody,
+  validateBody(addSchema),
+  cntrlTryCatchWrapper(postContact)
+);
+router.delete("/:contactId", isValidId, cntrlTryCatchWrapper(deleteContact));
+router.put(
+  "/:contactId",
+  isValidId,
+  isEmptyBody,
+  validateBody(putSchema),
+  cntrlTryCatchWrapper(putContact)
+);
+router.patch(
+  "/:contactId/favorite",
+  isValidId,
+  isEmptyBody,
+  validateBody(patchSchema),
+  cntrlTryCatchWrapper(patchFavorite)
+);
 
-router.get('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
-
-router.post('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
-
-router.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
-
-router.put('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
-
-module.exports = router
+export default router;
